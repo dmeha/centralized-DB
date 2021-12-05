@@ -1,2 +1,3 @@
-column|datatype|constraints
+column|type|constraints
 id|int|
+name|string|
