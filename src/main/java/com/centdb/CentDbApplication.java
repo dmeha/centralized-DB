@@ -13,8 +13,6 @@ public class CentDbApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CentDbApplication.class, args);
 		MainMenu.showLoginMenu();
-		Export export = new Export("database_name");
-		export.toSql();
 	}
 
 }

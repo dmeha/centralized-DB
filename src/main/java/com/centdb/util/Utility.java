@@ -39,7 +39,7 @@ public class Utility {
     public static boolean writeTofile(String path, String body) {
 		try {
 			FileWriter myWriter = new FileWriter(path, true);
-            myWriter.write("\r\n"+body);
+            myWriter.write("\r"+body+"\n");
             myWriter.close();
             return true;
 		} catch(Exception e) {

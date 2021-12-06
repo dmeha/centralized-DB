@@ -2,6 +2,8 @@ package com.centdb.module8;
 
 import java.util.Scanner;
 
+import com.centdb.module6.Export;
+
 public class MainMenu {
 	public static Scanner scanner = new Scanner(System.in);
 	
@@ -32,7 +34,7 @@ public class MainMenu {
 	public void showMainMenu() {
 		System.out.println("---------------Welcome to Main Menu---------------");
 		System.out.println("Please chose appropriate option");
-		System.out.println(" 1. Write Queries \n 2. Export \n 3. Data Model \n 4. Analytics \n 5. Exit");
+		System.out.println(" 1. Write Queries \n 2. Export \n 3. Data Model \n 4. Analytics \n 5. LogOut \n 6. Exit");
 		System.out.println("Enter your option: ");
 		String input = scanner.nextLine();
 		
@@ -41,13 +43,17 @@ public class MainMenu {
 			// Call Queries Method 
 			break;
 		case "2":
-			// call Export Method 
+			Export export = new Export("database_name");
+			export.toSql();
 			break;
 		case "3": 
 			// Call Data Model Method 
 			break;
 		case "4":
 			// Call Analytics Method 
+			break;
+		case "5":
+			showLoginMenu();
 			break;
 		default :
 			System.exit(0);

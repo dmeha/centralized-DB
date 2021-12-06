@@ -14,7 +14,6 @@ import com.centdb.util.Hashing;
 
 public class Login {
 	private final String BASE_USER_DIR_PATH = System.getProperty("user.dir") + "/userDetails/userLoginDetails.txt";
-	private Map<String, String> loginInformationMap = new HashMap<>(); 
 	
     String username, password;
     Scanner input;
@@ -32,11 +31,8 @@ public class Login {
     }
 
     private void validateUser(String username, String password){
-    	List<String[]> userDetails= new ArrayList<String[]>();
     	String[] userDetail = null;
         try {
-        	System.out.println("cheking user authentication");
-
         	userDetail = getPasswordRelatedToUser(username);
         	if(userDetail != null) {
         		String storedPassword = (userDetail[1]);
@@ -81,9 +77,11 @@ public class Login {
         			userDetail = user;
         		}
             }
-        } catch (FileNotFoundException e) {
+        } 
+        catch (FileNotFoundException e) {
           System.err.println("File not Found");
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
           System.err.println("I/O Error");
         }
         
