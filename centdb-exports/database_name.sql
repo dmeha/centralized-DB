@@ -52,4 +52,4 @@ LOCK TABLES `student_registration` WRITE;
 INSERT INTO `student_registration` VALUES (1,1,1),(2,1,2),(3,1,3),(4,2,1),(5,2,2),(6,2,3);
 UNLOCK TABLES;
 
--- Dump completed on 2021-12-05 00:31:37
+-- Dump completed on 2021-12-06 04:23:34
