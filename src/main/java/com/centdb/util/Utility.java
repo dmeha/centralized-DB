@@ -3,6 +3,7 @@ package com.centdb.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,4 +35,16 @@ public class Utility {
                 return null;
         }
     }
+    
+    public static boolean writeTofile(String path, String body) {
+		try {
+			FileWriter myWriter = new FileWriter(path, true);
+            myWriter.write("\r"+body+"\n");
+            myWriter.close();
+            return true;
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
 }
