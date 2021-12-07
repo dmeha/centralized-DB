@@ -1,0 +1,3 @@
+DB1|Table1|1|STATE|
+DB1|Table1|1|QUERY|
+
