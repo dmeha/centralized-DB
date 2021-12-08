@@ -27,38 +27,79 @@ public class CentDbApplication {
 				String query = sc.nextLine();
 				if (SyntaxChecker.isUseDatabaseQuery(query)) {
 					String databaseName = QueryParser.getDatabaseNameFromUseDatabaseQuery(query);
-					QueryExecutor.executeUseDatabaseQuery(databaseName);
+					if (QueryExecutor.executeUseDatabaseQuery(databaseName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isCreateDatabaseQuery(query)) {
 					String databaseName = QueryParser.getDatabaseNameFromCreateDatabaseQuery(query);
-					QueryExecutor.executeCreateDatabaseQuery(databaseName);
+					if (QueryExecutor.executeCreateDatabaseQuery(databaseName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isDropDatabaseQuery(query)) {
 					String databaseName = QueryParser.getDatabaseNameFromDropDatabaseQuery(query);
-					QueryExecutor.executeDropDatabaseQuery(databaseName);
+					if (QueryExecutor.executeDropDatabaseQuery(databaseName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isCreateTableQuery(query)) {
 					DatabaseTable table = QueryParser.getDatabaseTableFromCreateTableQuery(query);
-					QueryExecutor.executeCreateTableQuery(table);
+					if (QueryExecutor.executeCreateTableQuery(table)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isDropTableQuery(query)) {
 					String tableName = QueryParser.getTabaleNameFromDropTableQuery(query);
-					QueryExecutor.executeDropTableQuery(tableName);
+					if (QueryExecutor.executeDropTableQuery(tableName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isTruncateTableQuery(query)) {
 					String tableName = QueryParser.getTabaleNameFromTruncateTableQuery(query);
-					QueryExecutor.executeTruncateTableQuery(tableName);
+					if (QueryExecutor.executeTruncateTableQuery(tableName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isSelectQuery(query)) {
 					SelectQueryModel selectQuery = QueryParser.getSelectQueryModel(query);
-					QueryExecutor.executeSelectQuery(selectQuery);
+					if (QueryExecutor.executeSelectQuery(selectQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isInsertQuery(query)) {
 					InsertQueryModel insertQuery = QueryParser.getInsertQueryModel(query);
-					QueryExecutor.executeInsertQuery(insertQuery);
+					if (QueryExecutor.executeInsertQuery(insertQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isUpdateQuery(query)) {
 					UpdateQueryModel updateQuery = QueryParser.getUpdateQueryModel(query);
-					QueryExecutor.executeUpdateQuery(updateQuery);
+					if (QueryExecutor.executeUpdateQuery(updateQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else if (SyntaxChecker.isDeleteQuery(query)) {
 					DeleteQueryModel deleteQuery = QueryParser.getDeleteQueryModel(query);
-					QueryExecutor.executeDeleteQuery(deleteQuery);
+					if (QueryExecutor.executeDeleteQuery(deleteQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
 				} else {
 					System.out.println("Invalid.");
 				}
 			} catch (Exception e) {
+				// TODO: delete temp folders if error occurs
 				e.printStackTrace();
 			}
 		}

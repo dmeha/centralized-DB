@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.centdb.constants.DatabaseConstants;
@@ -35,13 +37,13 @@ public class QueryExecutor {
 			currentDatabase = databaseName;
 			return Boolean.TRUE;
 		} else {
-			System.out.println("Database does not exist.");
+			System.err.println("Database does not exist.");
 		}
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeDropDatabaseQuery(String databaseName) {
-		return Utility.deleteDirecotory(DatabaseConstants.DATABASE_PATH + databaseName);
+		return Utility.deleteDirectory(DatabaseConstants.DATABASE_PATH + databaseName);
 	}
 
 	public static Boolean executeCreateTableQuery(DatabaseTable table) {
@@ -170,6 +172,24 @@ public class QueryExecutor {
 	public static Boolean executeInsertQuery(InsertQueryModel insertQuery) {
 		String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
 				+ insertQuery.getTableName() + DatabaseConstants.TABLE_SUFFIX;
+		Integer primaryKeyColumnIndex = -1;
+		String metadataPath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
+				+ insertQuery.getTableName() + DatabaseConstants.METADATA_SUFFIX;
+		List<String[]> metadata = getTable(metadataPath);
+		for (int i = 1; i < metadata.size(); i++) {
+			if (metadata.get(i).length > 2 && metadata.get(i)[2] != null && metadata.get(i)[2].length() >= 11
+					&& metadata.get(i)[2].equalsIgnoreCase("primary key")) {
+				primaryKeyColumnIndex = i - 1;
+			}
+		}
+		Set<String> primaryKeyValues = new TreeSet<>();
+		if (primaryKeyColumnIndex != -1) {
+			List<String[]> table = getTable(tablePath);
+			for (String[] row : table) {
+				primaryKeyValues.add(row[primaryKeyColumnIndex]);
+			}
+		}
+		List<String> writeInDatabase = new ArrayList<>();
 		for (List<String> rowVal : insertQuery.getRowValues()) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(rowVal.get(0));
@@ -177,7 +197,16 @@ public class QueryExecutor {
 				builder.append(DatabaseConstants.DELIMITER_SYMBOL);
 				builder.append(rowVal.get(i));
 			}
+			if (primaryKeyColumnIndex != -1 && primaryKeyValues.contains(rowVal.get(primaryKeyColumnIndex))) {
+				System.err.println("Duplicate value in primary key column.");
+				return Boolean.FALSE;
+			}
+			if (primaryKeyColumnIndex != -1)
+				primaryKeyValues.add(rowVal.get(primaryKeyColumnIndex));
 			String row = builder.toString();
+			writeInDatabase.add(row);
+		}
+		for (String row : writeInDatabase) {
 			Utility.writeLineToFile(tablePath, row);
 		}
 		return Boolean.TRUE;

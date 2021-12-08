@@ -127,8 +127,22 @@ public class QueryParser {
 						if (!Utility.isFileExists(tablePath)) {
 							throw new RuntimeException("Foreign key table does not exists");
 						}
-						if(!Utility.readFirstLine(tablePath).contains(fieldName)) {
+						if (!Utility.readFirstLine(tablePath).contains(fieldName)) {
 							throw new RuntimeException("Foreign key column does not exists");
+						}
+						tablePath = DatabaseConstants.DATABASE_PATH + QueryExecutor.currentDatabase + File.separator
+								+ tableName + DatabaseConstants.METADATA_SUFFIX;
+						List<String[]> metadata = QueryExecutor.getTable(tablePath);
+						Boolean validDatatype = Boolean.FALSE;
+						for (String[] s : metadata) {
+							if (s[0].equalsIgnoreCase(fieldName)) {
+								if (s[1].equals(col.getDataType().getDataType())) {
+									validDatatype = Boolean.TRUE;
+								}
+							}
+						}
+						if (!validDatatype) {
+							throw new RuntimeException("Invalid datatype in foreign key");
 						}
 					}
 				}
