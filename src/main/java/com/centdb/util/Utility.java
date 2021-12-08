@@ -63,7 +63,7 @@ public class Utility {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean deleteDirecotory(String path) {
+	public static Boolean deleteDirectory(String path) {
 		try {
 			File file = new File(path);
 			if (!file.exists()) {
@@ -75,7 +75,7 @@ public class Utility {
 					currentFile.delete();
 				}
 			}
-			return file.mkdirs();
+			return file.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -144,7 +144,7 @@ public class Utility {
 		File file = new File(path);
 		return file.exists();
 	}
-	
+
 	public static String readFirstLine(String filePath) {
 		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 			String firstLine = reader.readLine();

@@ -1,5 +1,6 @@
 package com.centdb.module2;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import com.centdb.model.InsertQueryModel;
 import com.centdb.model.SelectQueryModel;
 import com.centdb.model.SqlDataType;
 import com.centdb.model.UpdateQueryModel;
+import com.centdb.util.Utility;
 
 public class QueryParser {
 
@@ -73,6 +75,8 @@ public class QueryParser {
 		// create table table_name(col1 type, col2 type, col2 type)
 		String[] optionalColumn = query.split(",");
 		for (int i = 1; i < optionalColumn.length - 1; i++) {
+			if (optionalColumn[i].trim().split(" ").length > 2)
+				break;
 			Column optionalCol = fetchColumn(optionalColumn[i]);
 			if (checkColumnExists(cols, optionalCol)) {
 				throw new RuntimeException("Duplicate column name.");
@@ -81,19 +85,94 @@ public class QueryParser {
 		}
 		if (optionalColumn.length >= 2) {
 			Column optionalCol = new Column();
-			StringBuilder builder = new StringBuilder(optionalColumn[optionalColumn.length - 1]);
-			while (builder.charAt(builder.length() - 1) != ')') {
+			String lastCol = optionalColumn[optionalColumn.length - 1];
+			if (lastCol.trim().split(" ").length == 2) {
+				StringBuilder builder = new StringBuilder(optionalColumn[optionalColumn.length - 1]);
+				while (builder.charAt(builder.length() - 1) != ')') {
+					builder.deleteCharAt(builder.length() - 1);
+				}
 				builder.deleteCharAt(builder.length() - 1);
+				optionalCol = fetchColumn(builder.toString());
+				if (checkColumnExists(cols, optionalCol)) {
+					throw new RuntimeException("Duplicate column name.");
+				}
+				cols.add(optionalCol);
 			}
-			builder.deleteCharAt(builder.length() - 1);
-			optionalCol = fetchColumn(builder.toString());
-			if (checkColumnExists(cols, optionalCol)) {
-				throw new RuntimeException("Duplicate column name.");
-			}
-			cols.add(optionalCol);
 		}
+
+		// create table t1 (a int, b varchar, primary key a, foreign key b references
+		// t2(a), foreign key a references t2(a))
+		addPrimaryKey(optionalColumn, cols);
+		addForeignKey(optionalColumn, cols);
 		table.setColumnList(cols);
 		return table;
+	}
+
+	private static void addForeignKey(String[] optionalColumn, List<Column> cols) {
+		for (int i = 1; i < optionalColumn.length; i++) {
+			if (optionalColumn[i].trim().length() >= 11
+					&& optionalColumn[i].trim().substring(0, 11).equalsIgnoreCase("foreign key")) {
+				String foreignKeyCol = optionalColumn[i].trim().split(" ")[2];
+				String tableName = optionalColumn[i].trim().split(" ")[4].split("\\(")[0];
+				String fieldName = optionalColumn[i].trim().split(" ")[4].split("\\(")[1].split("\\)")[0];
+				Boolean foreignKeyExists = Boolean.FALSE;
+				for (Column col : cols) {
+					if (col.getColumnName().equalsIgnoreCase(foreignKeyCol)) {
+						col.setIsForeignKey(Boolean.TRUE);
+						col.setForeignKeyTable(tableName);
+						col.setForeignKeyField(fieldName);
+						foreignKeyExists = Boolean.TRUE;
+						String tablePath = DatabaseConstants.DATABASE_PATH + QueryExecutor.currentDatabase
+								+ File.separator + tableName + DatabaseConstants.TABLE_SUFFIX;
+						if (!Utility.isFileExists(tablePath)) {
+							throw new RuntimeException("Foreign key table does not exists");
+						}
+						if (!Utility.readFirstLine(tablePath).contains(fieldName)) {
+							throw new RuntimeException("Foreign key column does not exists");
+						}
+						tablePath = DatabaseConstants.DATABASE_PATH + QueryExecutor.currentDatabase + File.separator
+								+ tableName + DatabaseConstants.METADATA_SUFFIX;
+						List<String[]> metadata = QueryExecutor.getTable(tablePath);
+						Boolean validDatatype = Boolean.FALSE;
+						for (String[] s : metadata) {
+							if (s[0].equalsIgnoreCase(fieldName)) {
+								if (s[1].equals(col.getDataType().getDataType())) {
+									validDatatype = Boolean.TRUE;
+								}
+							}
+						}
+						if (!validDatatype) {
+							throw new RuntimeException("Invalid datatype in foreign key");
+						}
+					}
+				}
+				if (!foreignKeyExists) {
+					throw new RuntimeException("Column does not exists");
+				}
+			}
+		}
+	}
+
+	private static void addPrimaryKey(String[] optionalColumn, List<Column> cols) {
+		for (int i = 1; i < optionalColumn.length; i++) {
+			if (optionalColumn[i].trim().length() >= 11
+					&& optionalColumn[i].trim().substring(0, 11).equalsIgnoreCase("primary key")) {
+				String primaryKeyName = optionalColumn[i].trim().split(" ")[2];
+				if (primaryKeyName.charAt(primaryKeyName.length() - 1) == ')') {
+					primaryKeyName = primaryKeyName.substring(0, primaryKeyName.length() - 1);
+				}
+				Boolean primaryKeyExists = Boolean.FALSE;
+				for (Column col : cols) {
+					if (col.getColumnName().equalsIgnoreCase(primaryKeyName)) {
+						col.setIsPrimaryKey(Boolean.TRUE);
+						primaryKeyExists = Boolean.TRUE;
+					}
+				}
+				if (!primaryKeyExists) {
+					throw new RuntimeException("Primary key column does not exist.");
+				}
+			}
+		}
 	}
 
 	public static SelectQueryModel getSelectQueryModel(String query) {
