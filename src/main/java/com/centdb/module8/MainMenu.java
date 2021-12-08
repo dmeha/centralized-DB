@@ -7,6 +7,7 @@ import java.util.Scanner;
 import com.centdb.module2.QueryRunner;
 import com.centdb.module6.Export;
 import com.centdb.module3.IdentifyTransaction;
+import com.centdb.module3.Transaction;
 
 public class MainMenu {
 	public static Scanner scanner = new Scanner(System.in);
@@ -54,8 +55,8 @@ public class MainMenu {
 							QueryRunner.run(queries.get(0));
 						} else if (queries.size() > 1) {
 							System.out.println("Committing transaction statements");
-							for (String query : queries) {
-								QueryRunner.run(query);
+							if(Transaction.run(queries)) {
+								System.out.println("Transaction completed successfully.");
 							}
 						} else if (queries.size() == 0) {
 							System.out.println("Rollback was called");

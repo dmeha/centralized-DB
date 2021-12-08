@@ -13,6 +13,7 @@ public class DatabaseConstants {
 	public static final String TABLE_SUFFIX = ".table";
 	public static final String METADATA_SUFFIX = ".metadata";
 	public static final String DELIMITER_SYMBOL = "|";
+	public static final String TMP_FILE = ".tmp";
 
 	public static class RegExConstants {
 
