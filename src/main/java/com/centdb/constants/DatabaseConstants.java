@@ -1,7 +1,14 @@
 package com.centdb.constants;
 
+import java.nio.file.Paths;
+
 public class DatabaseConstants {
-	
+
+	public static final String BASE_USER_DIR_PATH = Paths
+			.get(System.getProperty("user.dir"), "userDetails", "userLoginDetails.txt").toString();
+	public static final String BASE_DIRS_PATH = Paths.get(System.getProperty("user.dir"), "centdb-samples").toString();
+	public static final String BASE_EXPORT_PATH = Paths.get(System.getProperty("user.dir"), "centdb-exports")
+			.toString();
 	public static final String DATABASE_PATH = "./CentDB/";
 	public static final String TABLE_SUFFIX = ".table";
 	public static final String METADATA_SUFFIX = ".metadata";
@@ -20,6 +27,7 @@ public class DatabaseConstants {
 		public static final String OPEN_BRACKET_REGEX = "\\(";
 		public static final String CLOSE_BRACKET_REGEX = "\\)";
 		public static final String STAR_REGEX = "\\*";
+		public static final String DELIMITER_REGEX = "\\|";
 
 		public static final String REQUIRED_SPACES_REGEX = "( )+";
 		public static final String OPTIONAL_SPACES_REGEX = "( )*";
@@ -54,7 +62,7 @@ public class DatabaseConstants {
 		public static final String WHERE_CLAUSE_REGEX = "(" + REQUIRED_SPACES_REGEX + WHERE_REGEX
 				+ REQUIRED_SPACES_REGEX + PLACEHOLDER + OPTIONAL_SPACES_REGEX + EQUAL_SYMBOL + OPTIONAL_SPACES_REGEX
 				+ VALUE_PLACEHOLDER + ")";
-		
+
 		public static final String OPTIONAL_WHERE_CLAUSE_REGEX = WHERE_CLAUSE_REGEX + "?";
 
 		public static final String ROW_REGEX = "(" + OPEN_BRACKET_REGEX + VALUE_PLACEHOLDER + "("
