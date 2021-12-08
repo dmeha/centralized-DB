@@ -1,0 +1,4 @@
+column|type|constraints
+registration_id|int|primary key
+student_id|int|foreign key
+course_id|int|foreign key

@@ -1,0 +1,2 @@
+DB2|Crash query table 1|2021-12-05|
+
