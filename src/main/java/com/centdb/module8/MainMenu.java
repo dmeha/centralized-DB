@@ -1,9 +1,12 @@
 package com.centdb.module8;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import com.centdb.module2.QueryRunner;
 import com.centdb.module6.Export;
+import com.centdb.module3.IdentifyTransaction;
 
 public class MainMenu {
 	public static Scanner scanner = new Scanner(System.in);
@@ -44,6 +47,17 @@ public class MainMenu {
 
 				switch (input) {
 					case "1":
+						IdentifyTransaction transaction = new IdentifyTransaction();
+						List<String> query = transaction.readInput(); 
+						if(query.size() == 1) {
+							System.out.println("its query");
+						} else if(query.size() > 1) {
+							System.out.println("its Transaction");
+						} else if(query.size() == 0) {
+							System.out.println("Rollback was called");
+						}
+		
+						System.out.println(query);
 						QueryRunner.run();
 						break;
 					case "2":
