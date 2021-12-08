@@ -1,0 +1,25 @@
+{
+  "student": {
+    "columns": {
+      "name": "varchar",
+      "id": "int"
+    }
+  },
+  "student_registration": {
+    "columns": {
+      "course_id": "int",
+      "student_id": "int",
+      "id": "int"
+    },
+    "relations": {
+      "student": "id",
+      "course": "id"
+    }
+  },
+  "course": {
+    "columns": {
+      "name": "varchar",
+      "id": "int"
+    }
+  }
+}

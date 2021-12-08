@@ -1,6 +1,5 @@
 package com.centdb.module8;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,6 +7,7 @@ import com.centdb.module2.QueryRunner;
 import com.centdb.module6.Export;
 import com.centdb.module3.IdentifyTransaction;
 import com.centdb.module3.Transaction;
+import com.centdb.module5.DataModelling;
 
 public class MainMenu {
 	public static Scanner scanner = new Scanner(System.in);
@@ -37,6 +37,7 @@ public class MainMenu {
 	}
 
 	public void showMainMenu() {
+		String database = "";
 		while (true) {
 			try {
 				System.out.println("\n\n---------------Welcome to Main Menu---------------");
@@ -55,7 +56,7 @@ public class MainMenu {
 							QueryRunner.run(queries.get(0));
 						} else if (queries.size() > 1) {
 							System.out.println("Committing transaction statements");
-							if(Transaction.run(queries)) {
+							if (Transaction.run(queries)) {
 								System.out.println("Transaction completed successfully.");
 							}
 						} else if (queries.size() == 0) {
@@ -66,12 +67,17 @@ public class MainMenu {
 						System.out.println("\nAvailable databases: ");
 						Export.showDatabases();
 						System.out.println("\nEnter the database name: ");
-						String database = scanner.nextLine();
+						database = scanner.nextLine();
 						Export export = new Export(database);
 						export.toSql();
 						break;
 					case "3":
-						// Call Data Model Method
+						System.out.println("\nAvailable databases: ");
+						DataModelling.showDatabases();
+						System.out.println("\nEnter the database name: ");
+						database = scanner.nextLine();
+						DataModelling dataModelling = new DataModelling(database);
+						dataModelling.generateERD();
 						break;
 					case "4":
 						// Call Analytics Method
