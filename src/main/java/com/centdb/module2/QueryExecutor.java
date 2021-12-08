@@ -1,7 +1,9 @@
 package com.centdb.module2;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,11 +11,13 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import com.centdb.LogManagement.SqlLogger;
 import com.centdb.constants.DatabaseConstants;
 import com.centdb.model.Column;
 import com.centdb.model.DatabaseTable;
 import com.centdb.model.DeleteQueryModel;
 import com.centdb.model.InsertQueryModel;
+import com.centdb.model.LogModel;
 import com.centdb.model.SelectQueryModel;
 import com.centdb.model.UpdateQueryModel;
 import com.centdb.util.TableFormat;
@@ -28,7 +32,15 @@ public class QueryExecutor {
 	}
 
 	public static Boolean executeCreateDatabaseQuery(String databaseName) {
-		return Utility.createDirectory(DatabaseConstants.DATABASE_PATH + databaseName);
+		Date startTime = new Date();
+		if(Utility.createDirectory(DatabaseConstants.DATABASE_PATH + databaseName)) {
+			Date endTime = new Date();
+			log(currentDatabase, "CREATE", startTime, endTime, null, "SUCCESS");
+			return Boolean.TRUE;
+		}
+		Date endTime = new Date();
+		log(currentDatabase, "CREATE", startTime, endTime, null, "FAILED");
+		return Boolean.FALSE;
 	}
 
 	public static Boolean executeUseDatabaseQuery(String databaseName) {
@@ -46,8 +58,9 @@ public class QueryExecutor {
 	}
 
 	public static Boolean executeCreateTableQuery(DatabaseTable table, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				table.setTableName(table.getTableName() + DatabaseConstants.TMP_FILE);
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + table.getTableName()
@@ -68,48 +81,69 @@ public class QueryExecutor {
 						+ (col.getForeignKeyField() != null ? col.getForeignKeyField() : "");
 				Utility.writeLineToFile(metadataPath, row);
 			}
+			Date endTime = new Date();
+			log(currentDatabase, "CREATE", startTime, endTime, table.getTableName(), "SUCCESS");
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		Date endTime = new Date();
+		log(currentDatabase, "CREATE", startTime, endTime, table.getTableName(), "FAILED");
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeDropTableQuery(String tableName, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				tableName = (tableName + DatabaseConstants.TMP_FILE);
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + tableName
 					+ DatabaseConstants.TABLE_SUFFIX;
 			String metadataPath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + tableName
 					+ DatabaseConstants.METADATA_SUFFIX;
-			return Utility.deleteFile(tablePath) && Utility.deleteFile(metadataPath);
+			if(Utility.deleteFile(tablePath) && Utility.deleteFile(metadataPath)) {
+				Date endTime = new Date();
+				log(currentDatabase, "DROP", startTime, endTime, tableName, "SUCCESS");
+				return Boolean.TRUE;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		Date endTime = new Date();
+		log(currentDatabase, "DROP", startTime, endTime, tableName, "FAILED");
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeTruncateTableQuery(String tableName, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				tableName = (tableName + DatabaseConstants.TMP_FILE);
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + tableName
 					+ DatabaseConstants.TABLE_SUFFIX;
 			String firstLine = Utility.readFirstLine(tablePath);
 			Utility.deleteContentOfFile(tablePath);
-			return Utility.writeLineToFile(tablePath, firstLine);
+			if(Utility.writeLineToFile(tablePath, firstLine)) {
+				Date endTime = new Date();
+				log(currentDatabase, "TRUNCATE", startTime, endTime, tableName, "SUCCESS");
+				return Boolean.TRUE;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Date endTime = new Date();
+		log(currentDatabase, "TRUNCATE", startTime, endTime, tableName, "FAILED");
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeSelectQuery(SelectQueryModel selectQuery, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				selectQuery.setTableName(selectQuery.getTableName() + DatabaseConstants.TMP_FILE);
 			}
 			Boolean isAllColumn = selectQuery.getSelectAllColumn();
@@ -151,20 +185,28 @@ public class QueryExecutor {
 				if (conditionSatisfy)
 					tableView.add(rowData.toArray(new String[0]));
 			}
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
+				Date endTime = new Date();
+				log(currentDatabase, "SELECT", startTime, endTime, selectQuery.getTableName(), "SUCCESS");
 				return Boolean.TRUE;
 			}
 			TableFormat.printTable(tableView);
+
+			Date endTime = new Date();
+			log(currentDatabase, "SELECT", startTime, endTime, selectQuery.getTableName(), "SUCCESS");
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Date endTime = new Date();
+		log(currentDatabase, "SELECT", startTime, endTime, selectQuery.getTableName(), "FAILED");
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeUpdateQuery(UpdateQueryModel updateQuery, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				updateQuery.setTableName(updateQuery.getTableName() + DatabaseConstants.TMP_FILE);
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
@@ -186,6 +228,9 @@ public class QueryExecutor {
 					table.get(i)[updateColIdx] = updateQuery.getUpdateColValue();
 				Utility.deleteContentOfFile(tablePath);
 				insertMultipleRows(tablePath, table);
+
+				Date endTime = new Date();
+				log(currentDatabase, "UPDATE", startTime, endTime, updateQuery.getTableName(), "SUCCESS");
 				return Boolean.TRUE;
 			}
 			final Integer conditionColIdx = conColIdx;
@@ -200,16 +245,23 @@ public class QueryExecutor {
 
 			Utility.deleteContentOfFile(tablePath);
 			insertMultipleRows(tablePath, table);
+
+			Date endTime = new Date();
+			log(currentDatabase, "UPDATE", startTime, endTime, updateQuery.getTableName(), "SUCCESS");
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		Date endTime = new Date();
+		log(currentDatabase, "UPDATE", startTime, endTime, updateQuery.getTableName(), "FAILED");
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeInsertQuery(InsertQueryModel insertQuery, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				insertQuery.setTableName(insertQuery.getTableName() + DatabaseConstants.TMP_FILE);
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
@@ -241,6 +293,9 @@ public class QueryExecutor {
 				}
 				if (primaryKeyColumnIndex != -1 && primaryKeyValues.contains(rowVal.get(primaryKeyColumnIndex))) {
 					System.err.println("Duplicate value in primary key column.");
+
+					Date endTime = new Date();
+					log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "FAILED");
 					return Boolean.FALSE;
 				}
 				if (primaryKeyColumnIndex != -1)
@@ -251,20 +306,29 @@ public class QueryExecutor {
 			for (String row : writeInDatabase) {
 				Utility.writeLineToFile(tablePath, row);
 			}
+
+			Date endTime = new Date();
+			log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "SUCCESS");
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		Date endTime = new Date();
+		log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "FAILED");
 		return Boolean.FALSE;
 	}
 
 	public static Boolean executeDeleteQuery(DeleteQueryModel deleteQuery, Boolean isTransactionQuery) {
+		Date startTime = new Date();
 		try {
-			if(isTransactionQuery) {
+			if (isTransactionQuery) {
 				deleteQuery.setTableName(deleteQuery.getTableName() + DatabaseConstants.TMP_FILE);
 			}
 			if (deleteQuery.getDeleteAll()) {
 				executeTruncateTableQuery(deleteQuery.getTableName(), isTransactionQuery);
+				Date endTime = new Date();
+				log(currentDatabase, "DELETE", startTime, endTime, deleteQuery.getTableName(), "SUCCESS");
 				return Boolean.TRUE;
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
@@ -282,10 +346,16 @@ public class QueryExecutor {
 					.collect(Collectors.toList());
 			Utility.deleteContentOfFile(tablePath);
 			insertMultipleRows(tablePath, table);
+
+			Date endTime = new Date();
+			log(currentDatabase, "DELETE", startTime, endTime, deleteQuery.getTableName(), "SUCCESS");
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		Date endTime = new Date();
+		log(currentDatabase, "DELETE", startTime, endTime, deleteQuery.getTableName(), "FAILED");
 		return Boolean.FALSE;
 	}
 
@@ -338,5 +408,17 @@ public class QueryExecutor {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private static void log(String databaseName, String typeOfQuery, Date startTime, Date endTime, String tableName, String queryStatus) {
+		LogModel logModel = new LogModel();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		logModel.setDataBaseName(databaseName);
+		logModel.setTableName(tableName);
+		logModel.setStartTime(formatter.format(startTime));
+		logModel.setEndTime(formatter.format(endTime));
+		logModel.setTypeOfQuery(typeOfQuery);
+		logModel.setQueryStatus(queryStatus);
+		new SqlLogger(logModel).queryLog();
 	}
 }
