@@ -56,7 +56,12 @@ public class QueryExecutor {
 			Utility.writeLineToFile(metadataPath, getMetaDataHeader());
 			for (Column col : table.getColumnList()) {
 				String row = col.getColumnName() + DatabaseConstants.DELIMITER_SYMBOL + col.getDataType().getDataType()
-						+ DatabaseConstants.DELIMITER_SYMBOL + (col.getIsPrimaryKey() ? "primary key" : "");
+						+ DatabaseConstants.DELIMITER_SYMBOL
+						+ (col.getIsPrimaryKey() ? "primary key" : (col.getIsForeignKey()) ? "foreign key" : "")
+						+ DatabaseConstants.DELIMITER_SYMBOL
+						+ (col.getForeignKeyTable() != null ? col.getForeignKeyTable() : "")
+						+ DatabaseConstants.DELIMITER_SYMBOL
+						+ (col.getForeignKeyField() != null ? col.getForeignKeyField() : "");
 				Utility.writeLineToFile(metadataPath, row);
 			}
 		} catch (Exception e) {
@@ -209,7 +214,9 @@ public class QueryExecutor {
 
 	private static String getMetaDataHeader() {
 		return new StringBuilder().append("column").append(DatabaseConstants.DELIMITER_SYMBOL).append("type")
-				.append(DatabaseConstants.DELIMITER_SYMBOL).append("constraints").toString();
+				.append(DatabaseConstants.DELIMITER_SYMBOL).append("constraints")
+				.append(DatabaseConstants.DELIMITER_SYMBOL).append("foreign_key_table")
+				.append(DatabaseConstants.DELIMITER_SYMBOL).append("foreign_key_col").toString();
 	}
 
 	private static String getTableHeader(DatabaseTable table) {
