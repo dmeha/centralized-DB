@@ -30,7 +30,7 @@ public class QueryParser {
 	}
 
 	public static String getDatabaseNameFromUseDatabaseQuery(String query) {
-		return null;
+		return query.trim().replace(" +", " ").split(" ")[2];
 	}
 
 	public static String getDatabaseNameFromDropDatabaseQuery(String query) {
@@ -58,25 +58,26 @@ public class QueryParser {
 	public static DatabaseTable getDatabaseTableFromCreateTableQuery(String query) {
 		DatabaseTable table = new DatabaseTable();
 		// create table table_name
-		table.tableName = findGroupFromRegEx(query, RegExConstants.CREATE_TABLE_QUERY_REGEX, 17);
+		table.setTableName(findGroupFromRegEx(query, RegExConstants.CREATE_TABLE_QUERY_REGEX, 17));
+		List<Column> cols = new ArrayList<>();
 
 		// create table table_name(col1 type)
 		String columnName = findGroupFromRegEx(query, RegExConstants.CREATE_TABLE_QUERY_REGEX, 20);
 		String dataType = findGroupFromRegEx(query, RegExConstants.CREATE_TABLE_QUERY_REGEX, 22);
 		Column column = new Column();
-		column.columnName = columnName;
-		column.dataType = findDataType.get(dataType.toLowerCase());
-		table.columnList.add(column);
+		column.setColumnName(columnName);
+		column.setDataType(findDataType.get(dataType.toLowerCase()));
+		cols.add(column);
 
 		// create table table_name(col1 type (, colX type)*)
 		// create table table_name(col1 type, col2 type, col2 type)
 		String[] optionalColumn = query.split(",");
 		for (int i = 1; i < optionalColumn.length - 1; i++) {
 			Column optionalCol = fetchColumn(optionalColumn[i]);
-			if (checkColumnExists(table.columnList, optionalCol)) {
+			if (checkColumnExists(cols, optionalCol)) {
 				throw new RuntimeException("Duplicate column name.");
 			}
-			table.columnList.add(optionalCol);
+			cols.add(optionalCol);
 		}
 		if (optionalColumn.length >= 2) {
 			Column optionalCol = new Column();
@@ -86,11 +87,12 @@ public class QueryParser {
 			}
 			builder.deleteCharAt(builder.length() - 1);
 			optionalCol = fetchColumn(builder.toString());
-			if (checkColumnExists(table.columnList, optionalCol)) {
+			if (checkColumnExists(cols, optionalCol)) {
 				throw new RuntimeException("Duplicate column name.");
 			}
-			table.columnList.add(optionalCol);
+			cols.add(optionalCol);
 		}
+		table.setColumnList(cols);
 		return table;
 	}
 
@@ -236,7 +238,7 @@ public class QueryParser {
 
 	private static Boolean checkColumnExists(List<Column> columns, Column column) {
 		for (Column col : columns) {
-			if (col.columnName.equalsIgnoreCase(column.columnName)) {
+			if (col.getColumnName().equalsIgnoreCase(column.getColumnName())) {
 				return true;
 			}
 		}
@@ -253,8 +255,8 @@ public class QueryParser {
 		}
 		assert (c.size() == 2);
 		Column col = new Column();
-		col.columnName = c.get(0);
-		col.dataType = findDataType.get(c.get(1).toLowerCase());
+		col.setColumnName(c.get(0));
+		col.setDataType(findDataType.get(c.get(1).toLowerCase()));
 		return col;
 	}
 

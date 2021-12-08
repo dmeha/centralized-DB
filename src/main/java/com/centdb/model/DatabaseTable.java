@@ -5,9 +5,9 @@ import java.util.List;
 
 public class DatabaseTable {
 
-	public String tableName;
+	private String tableName;
 	
-	public List<Column> columnList;
+	private List<Column> columnList;
 
 	public DatabaseTable() {
 		columnList = new ArrayList<>();
@@ -16,5 +16,21 @@ public class DatabaseTable {
 	@Override
 	public String toString() {
 		return "DatabaseTable [tabeName=" + tableName + ", columnList=" + columnList + "]";
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public List<Column> getColumnList() {
+		return columnList;
+	}
+
+	public void setColumnList(List<Column> columnList) {
+		this.columnList = columnList;
 	}
 }

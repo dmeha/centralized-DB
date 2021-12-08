@@ -31,4 +31,52 @@ public class UpdateQueryModel {
 				+ updateColName + ", updateColValue=" + updateColValue + ", conditionColName=" + conditionColName
 				+ ", conditionColVal=" + conditionColVal + "]";
 	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public Boolean getUpdateAll() {
+		return updateAll;
+	}
+
+	public void setUpdateAll(Boolean updateAll) {
+		this.updateAll = updateAll;
+	}
+
+	public String getUpdateColName() {
+		return updateColName;
+	}
+
+	public void setUpdateColName(String updateColName) {
+		this.updateColName = updateColName;
+	}
+
+	public String getUpdateColValue() {
+		return updateColValue;
+	}
+
+	public void setUpdateColValue(String updateColValue) {
+		this.updateColValue = updateColValue;
+	}
+
+	public String getConditionColName() {
+		return conditionColName;
+	}
+
+	public void setConditionColName(String conditionColName) {
+		this.conditionColName = conditionColName;
+	}
+
+	public String getConditionColVal() {
+		return conditionColVal;
+	}
+
+	public void setConditionColVal(String conditionColVal) {
+		this.conditionColVal = conditionColVal;
+	}
 }

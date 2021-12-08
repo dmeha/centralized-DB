@@ -1,6 +1,11 @@
 package com.centdb.constants;
 
 public class DatabaseConstants {
+	
+	public static final String DATABASE_PATH = "./CentDB/";
+	public static final String TABLE_SUFFIX = ".table";
+	public static final String METADATA_SUFFIX = ".metadata";
+	public static final String DELIMITER_SYMBOL = "|";
 
 	public static class RegExConstants {
 

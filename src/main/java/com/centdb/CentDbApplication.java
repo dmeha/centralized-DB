@@ -5,6 +5,12 @@ import java.util.Scanner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.centdb.model.DatabaseTable;
+import com.centdb.model.DeleteQueryModel;
+import com.centdb.model.InsertQueryModel;
+import com.centdb.model.SelectQueryModel;
+import com.centdb.model.UpdateQueryModel;
+import com.centdb.module2.QueryExecutor;
 import com.centdb.module2.QueryParser;
 import com.centdb.module2.SyntaxChecker;
 import com.centdb.module8.MainMenu;
@@ -17,32 +23,42 @@ public class CentDbApplication {
 		MainMenu.showLoginMenu();
 		Scanner sc = new Scanner(System.in);
 		while (Boolean.TRUE) {
+			System.out.print("Enter a query: ");
 			String query = sc.nextLine();
 			if (SyntaxChecker.isUseDatabaseQuery(query)) {
-				System.out.println(QueryParser.getDatabaseNameFromUseDatabaseQuery(query));
+				String databaseName = QueryParser.getDatabaseNameFromUseDatabaseQuery(query);
+				QueryExecutor.executeUseDatabaseQuery(databaseName);
 			} else if (SyntaxChecker.isCreateDatabaseQuery(query)) {
-				System.out.println(QueryParser.getDatabaseNameFromCreateDatabaseQuery(query));
+				String databaseName = QueryParser.getDatabaseNameFromCreateDatabaseQuery(query);
+				QueryExecutor.executeCreateDatabaseQuery(databaseName);
 			} else if (SyntaxChecker.isDropDatabaseQuery(query)) {
-				System.out.println(QueryParser.getDatabaseNameFromDropDatabaseQuery(query));
-				System.out.println(QueryParser.getDatabaseNameFromDropDatabaseQuery(query));
+				String databaseName = QueryParser.getDatabaseNameFromDropDatabaseQuery(query);
+				QueryExecutor.executeDropDatabaseQuery(databaseName);
 			} else if (SyntaxChecker.isCreateTableQuery(query)) {
-				System.out.println(QueryParser.getDatabaseTableFromCreateTableQuery(query));
+				DatabaseTable table = QueryParser.getDatabaseTableFromCreateTableQuery(query);
+				QueryExecutor.executeCreateTableQuery(table);
 			} else if (SyntaxChecker.isDropTableQuery(query)) {
-				System.out.println(QueryParser.getTabaleNameFromDropTableQuery(query));
+				String tableName = QueryParser.getTabaleNameFromDropTableQuery(query);
+				QueryExecutor.executeDropTableQuery(tableName);
 			} else if (SyntaxChecker.isTruncateTableQuery(query)) {
-				System.out.println(QueryParser.getTabaleNameFromTruncateTableQuery(query));
+				String tableName = QueryParser.getTabaleNameFromTruncateTableQuery(query);
+				QueryExecutor.executeTruncateTableQuery(tableName);
 			} else if (SyntaxChecker.isSelectQuery(query)) {
-				System.out.println(QueryParser.getSelectQueryModel(query));
+				SelectQueryModel selectQuery = QueryParser.getSelectQueryModel(query);
+				QueryExecutor.executeSelectQuery(selectQuery);
 			} else if (SyntaxChecker.isInsertQuery(query)) {
-				System.out.println(QueryParser.getInsertQueryModel(query));
+				InsertQueryModel insertQuery = QueryParser.getInsertQueryModel(query);
+				QueryExecutor.executeInsertQuery(insertQuery);
 			} else if (SyntaxChecker.isUpdateQuery(query)) {
-				System.out.println(QueryParser.getUpdateQueryModel(query));
+				UpdateQueryModel updateQuery = QueryParser.getUpdateQueryModel(query);
+				QueryExecutor.executeUpdateQuery(updateQuery);
 			} else if (SyntaxChecker.isDeleteQuery(query)) {
-				System.out.println(QueryParser.getDeleteQueryModel(query));
+				DeleteQueryModel deleteQuery = QueryParser.getDeleteQueryModel(query);
+				QueryExecutor.executeDeleteQuery(deleteQuery);
 			} else {
 				System.out.println("Invalid.");
-				break;
 			}
 		}
+		sc.close();
 	}
 }

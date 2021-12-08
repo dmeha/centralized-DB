@@ -33,4 +33,52 @@ public class SelectQueryModel {
 				+ selectAllColumn + ", selectAllRows=" + selectAllRows + ", conditionColName=" + conditionColName
 				+ ", conditionColVal=" + conditionColVal + "]";
 	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public List<String> getColumnNameList() {
+		return columnNameList;
+	}
+
+	public void setColumnNameList(List<String> columnNameList) {
+		this.columnNameList = columnNameList;
+	}
+
+	public Boolean getSelectAllColumn() {
+		return selectAllColumn;
+	}
+
+	public void setSelectAllColumn(Boolean selectAllColumn) {
+		this.selectAllColumn = selectAllColumn;
+	}
+
+	public Boolean getSelectAllRows() {
+		return selectAllRows;
+	}
+
+	public void setSelectAllRows(Boolean selectAllRows) {
+		this.selectAllRows = selectAllRows;
+	}
+
+	public String getConditionColName() {
+		return conditionColName;
+	}
+
+	public void setConditionColName(String conditionColName) {
+		this.conditionColName = conditionColName;
+	}
+
+	public String getConditionColVal() {
+		return conditionColVal;
+	}
+
+	public void setConditionColVal(String conditionColVal) {
+		this.conditionColVal = conditionColVal;
+	}
 }
