@@ -5,6 +5,10 @@ public class LogModel {
 	private String dataBaseName;
 	
 	private String tableName;
+
+	private String rowCount;
+
+	private String dataBaseState;
 	
 	private String typeOfQuery;
 	
@@ -28,6 +32,22 @@ public class LogModel {
 
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+
+	public String getRowCount() {
+		return rowCount;
+	}
+
+	public void setRowCount(String rowCount) {
+		this.rowCount = rowCount;
+	}
+
+	public String getDataBaseState() {
+		return dataBaseState;
+	}
+
+	public void setDataBaseState(String dataBaseState) {
+		this.dataBaseState = dataBaseState;
 	}
 
 	public String getTypeOfQuery() {
