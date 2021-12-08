@@ -10,51 +10,97 @@ import com.centdb.model.UpdateQueryModel;
 
 public class QueryRunner {
 
-    public static void run() {
-        Scanner sc = new Scanner(System.in);
-        while (Boolean.TRUE) {
-            System.out.print("\nEnter a query: ");
-            String query = sc.nextLine();
-            if (SyntaxChecker.isUseDatabaseQuery(query)) {
-                String databaseName = QueryParser.getDatabaseNameFromUseDatabaseQuery(query);
-                QueryExecutor.executeUseDatabaseQuery(databaseName);
-            } else if (SyntaxChecker.isCreateDatabaseQuery(query)) {
-                String databaseName = QueryParser.getDatabaseNameFromCreateDatabaseQuery(query);
-                QueryExecutor.executeCreateDatabaseQuery(databaseName);
-            } else if (SyntaxChecker.isDropDatabaseQuery(query)) {
-                String databaseName = QueryParser.getDatabaseNameFromDropDatabaseQuery(query);
-                QueryExecutor.executeDropDatabaseQuery(databaseName);
-            } else if (SyntaxChecker.isCreateTableQuery(query)) {
-                DatabaseTable table = QueryParser.getDatabaseTableFromCreateTableQuery(query);
-                QueryExecutor.executeCreateTableQuery(table);
-            } else if (SyntaxChecker.isDropTableQuery(query)) {
-                String tableName = QueryParser.getTabaleNameFromDropTableQuery(query);
-                QueryExecutor.executeDropTableQuery(tableName);
-            } else if (SyntaxChecker.isTruncateTableQuery(query)) {
-                String tableName = QueryParser.getTabaleNameFromTruncateTableQuery(query);
-                QueryExecutor.executeTruncateTableQuery(tableName);
-            } else if (SyntaxChecker.isSelectQuery(query)) {
-                SelectQueryModel selectQuery = QueryParser.getSelectQueryModel(query);
-                QueryExecutor.executeSelectQuery(selectQuery);
-            } else if (SyntaxChecker.isInsertQuery(query)) {
-                InsertQueryModel insertQuery = QueryParser.getInsertQueryModel(query);
-                QueryExecutor.executeInsertQuery(insertQuery);
-            } else if (SyntaxChecker.isUpdateQuery(query)) {
-                UpdateQueryModel updateQuery = QueryParser.getUpdateQueryModel(query);
-                QueryExecutor.executeUpdateQuery(updateQuery);
-            } else if (SyntaxChecker.isDeleteQuery(query)) {
-                DeleteQueryModel deleteQuery = QueryParser.getDeleteQueryModel(query);
-                QueryExecutor.executeDeleteQuery(deleteQuery);
-            } else {
-                System.out.println("Invalid.");
-            }
-            System.out.println("\nDo you want to continue querying? [y/n]: ");
-            String continueQueries = sc.nextLine();
-            if (!continueQueries.toLowerCase().equals("y")) {
-                return;
-            }
-        }
-        sc.close();
-    }
+	public static void run() {
+		Scanner sc = new Scanner(System.in);
+		while (Boolean.TRUE) {
+			System.out.print("\nEnter a query: ");
+			try {
+				String query = sc.nextLine();
+				if (SyntaxChecker.isUseDatabaseQuery(query)) {
+					String databaseName = QueryParser.getDatabaseNameFromUseDatabaseQuery(query);
+					if (QueryExecutor.executeUseDatabaseQuery(databaseName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isCreateDatabaseQuery(query)) {
+					String databaseName = QueryParser.getDatabaseNameFromCreateDatabaseQuery(query);
+					if (QueryExecutor.executeCreateDatabaseQuery(databaseName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isDropDatabaseQuery(query)) {
+					String databaseName = QueryParser.getDatabaseNameFromDropDatabaseQuery(query);
+					if (QueryExecutor.executeDropDatabaseQuery(databaseName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isCreateTableQuery(query)) {
+					DatabaseTable table = QueryParser.getDatabaseTableFromCreateTableQuery(query);
+					if (QueryExecutor.executeCreateTableQuery(table)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isDropTableQuery(query)) {
+					String tableName = QueryParser.getTabaleNameFromDropTableQuery(query);
+					if (QueryExecutor.executeDropTableQuery(tableName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isTruncateTableQuery(query)) {
+					String tableName = QueryParser.getTabaleNameFromTruncateTableQuery(query);
+					if (QueryExecutor.executeTruncateTableQuery(tableName)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isSelectQuery(query)) {
+					SelectQueryModel selectQuery = QueryParser.getSelectQueryModel(query);
+					if (QueryExecutor.executeSelectQuery(selectQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isInsertQuery(query)) {
+					InsertQueryModel insertQuery = QueryParser.getInsertQueryModel(query);
+					if (QueryExecutor.executeInsertQuery(insertQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isUpdateQuery(query)) {
+					UpdateQueryModel updateQuery = QueryParser.getUpdateQueryModel(query);
+					if (QueryExecutor.executeUpdateQuery(updateQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else if (SyntaxChecker.isDeleteQuery(query)) {
+					DeleteQueryModel deleteQuery = QueryParser.getDeleteQueryModel(query);
+					if (QueryExecutor.executeDeleteQuery(deleteQuery)) {
+						System.out.println("Query executed successfullly.");
+					} else {
+						System.err.println("Query cannot be executed.");
+					}
+				} else {
+					System.out.println("Invalid Query.");
+				}
+			} catch (Exception e) {
+				// TODO: delete temp folders if error occurs
+				e.printStackTrace();
+			}
+			System.out.println("\nDo you want to continue querying? [y/n]: ");
+			String continueQueries = sc.nextLine();
+			if (!continueQueries.toLowerCase().equals("y")) {
+				sc.close();
+				return;
+			}
+		}
+		sc.close();
+	}
 
 }
