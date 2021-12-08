@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import com.centdb.module2.QueryRunner;
 import com.centdb.module6.Export;
+import com.centdb.module7.Analysis;
 import com.centdb.module3.IdentifyTransaction;
 import com.centdb.module3.Transaction;
 import com.centdb.module5.DataModelling;
@@ -80,7 +81,8 @@ public class MainMenu {
 						dataModelling.generateERD();
 						break;
 					case "4":
-						// Call Analytics Method
+						Analysis analysis = new Analysis();
+						analysis.readInput();
 						break;
 					case "5":
 						showLoginMenu();

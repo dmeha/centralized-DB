@@ -15,7 +15,7 @@ public class IdentifyTransaction {
 		String cmtstr="commit";
 		String rollBack="rollback";
 		System.out.println("Enter Query");
-		System.out.println("/n>");
+		System.out.println("\n>");
 		Scanner input = new Scanner(System.in);
 		List<String> lines = new ArrayList<String>();
 		String lineNew=input.nextLine();
