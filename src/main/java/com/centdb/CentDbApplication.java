@@ -3,13 +3,11 @@ package com.centdb;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.centdb.module8.MainMenu;
-
 @SpringBootApplication
 public class CentDbApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CentDbApplication.class, args);
-		MainMenu.showLoginMenu();
 	}
+
 }
