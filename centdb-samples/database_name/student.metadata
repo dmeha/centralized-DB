@@ -1,4 +1,0 @@
-column|type|constraints
-id|int|primary key
-name|string|
-email|string|
