@@ -32,7 +32,6 @@ public class IdentifyTransaction {
 				}
 			}
 		}
-		System.out.print(lines);
 		return lines;
 	}
 }
