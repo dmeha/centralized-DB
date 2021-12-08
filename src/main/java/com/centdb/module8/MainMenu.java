@@ -48,17 +48,18 @@ public class MainMenu {
 				switch (input) {
 					case "1":
 						IdentifyTransaction transaction = new IdentifyTransaction();
-						List<String> query = transaction.readInput(); 
-						if(query.size() == 1) {
-							System.out.println("its query");
-						} else if(query.size() > 1) {
-							System.out.println("its Transaction");
-						} else if(query.size() == 0) {
+						List<String> queries = transaction.readInput();
+						if (queries.size() == 1) {
+							// System.out.println("its query");
+							QueryRunner.run(queries.get(0));
+						} else if (queries.size() > 1) {
+							System.out.println("Committing transaction statements");
+							for (String query : queries) {
+								QueryRunner.run(query);
+							}
+						} else if (queries.size() == 0) {
 							System.out.println("Rollback was called");
 						}
-		
-						System.out.println(query);
-						QueryRunner.run();
 						break;
 					case "2":
 						System.out.println("\nAvailable databases: ");
