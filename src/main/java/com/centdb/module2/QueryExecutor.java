@@ -45,8 +45,11 @@ public class QueryExecutor {
 		return Utility.deleteDirectory(DatabaseConstants.DATABASE_PATH + databaseName);
 	}
 
-	public static Boolean executeCreateTableQuery(DatabaseTable table) {
+	public static Boolean executeCreateTableQuery(DatabaseTable table, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				table.setTableName(table.getTableName() + DatabaseConstants.TMP_FILE);
+			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + table.getTableName()
 					+ DatabaseConstants.TABLE_SUFFIX;
 			String metadataPath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
@@ -72,8 +75,11 @@ public class QueryExecutor {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean executeDropTableQuery(String tableName) {
+	public static Boolean executeDropTableQuery(String tableName, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				tableName = (tableName + DatabaseConstants.TMP_FILE);
+			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + tableName
 					+ DatabaseConstants.TABLE_SUFFIX;
 			String metadataPath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + tableName
@@ -85,8 +91,11 @@ public class QueryExecutor {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean executeTruncateTableQuery(String tableName) {
+	public static Boolean executeTruncateTableQuery(String tableName, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				tableName = (tableName + DatabaseConstants.TMP_FILE);
+			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator + tableName
 					+ DatabaseConstants.TABLE_SUFFIX;
 			String firstLine = Utility.readFirstLine(tablePath);
@@ -98,8 +107,11 @@ public class QueryExecutor {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean executeSelectQuery(SelectQueryModel selectQuery) {
+	public static Boolean executeSelectQuery(SelectQueryModel selectQuery, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				selectQuery.setTableName(selectQuery.getTableName() + DatabaseConstants.TMP_FILE);
+			}
 			Boolean isAllColumn = selectQuery.getSelectAllColumn();
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
 					+ selectQuery.getTableName() + DatabaseConstants.TABLE_SUFFIX;
@@ -139,6 +151,9 @@ public class QueryExecutor {
 				if (conditionSatisfy)
 					tableView.add(rowData.toArray(new String[0]));
 			}
+			if(isTransactionQuery) {
+				return Boolean.TRUE;
+			}
 			TableFormat.printTable(tableView);
 			return Boolean.TRUE;
 		} catch (Exception e) {
@@ -147,8 +162,11 @@ public class QueryExecutor {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean executeUpdateQuery(UpdateQueryModel updateQuery) {
+	public static Boolean executeUpdateQuery(UpdateQueryModel updateQuery, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				updateQuery.setTableName(updateQuery.getTableName() + DatabaseConstants.TMP_FILE);
+			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
 					+ updateQuery.getTableName() + DatabaseConstants.TABLE_SUFFIX;
 			List<String[]> table = getTable(tablePath);
@@ -189,8 +207,11 @@ public class QueryExecutor {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean executeInsertQuery(InsertQueryModel insertQuery) {
+	public static Boolean executeInsertQuery(InsertQueryModel insertQuery, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				insertQuery.setTableName(insertQuery.getTableName() + DatabaseConstants.TMP_FILE);
+			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator
 					+ insertQuery.getTableName() + DatabaseConstants.TABLE_SUFFIX;
 			Integer primaryKeyColumnIndex = -1;
@@ -237,10 +258,13 @@ public class QueryExecutor {
 		return Boolean.FALSE;
 	}
 
-	public static Boolean executeDeleteQuery(DeleteQueryModel deleteQuery) {
+	public static Boolean executeDeleteQuery(DeleteQueryModel deleteQuery, Boolean isTransactionQuery) {
 		try {
+			if(isTransactionQuery) {
+				deleteQuery.setTableName(deleteQuery.getTableName() + DatabaseConstants.TMP_FILE);
+			}
 			if (deleteQuery.getDeleteAll()) {
-				executeTruncateTableQuery(deleteQuery.getTableName());
+				executeTruncateTableQuery(deleteQuery.getTableName(), isTransactionQuery);
 				return Boolean.TRUE;
 			}
 			String tablePath = DatabaseConstants.DATABASE_PATH + currentDatabase + File.separator

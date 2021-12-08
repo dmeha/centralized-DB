@@ -10,6 +10,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
+import com.centdb.constants.DatabaseConstants;
+
 public class Utility {
 
 	public static List<String> readFileByLines(File file) {
@@ -154,5 +158,39 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static void createCopyOfAllFilesInDirectory(String directory) {
+		try {
+			final File folder = new File(directory);
+			for (final File file : folder.listFiles()) {
+				if (file.isFile()) {
+					StringBuilder fileName = new StringBuilder();
+					fileName.append(directory + "\\/");
+					fileName.append(file.getName().split("\\.")[0]);
+					fileName.append(DatabaseConstants.TMP_FILE);
+					fileName.append(file.getName().split("\\.")[1].equals(DatabaseConstants.TABLE_SUFFIX.substring(1))
+							? DatabaseConstants.TABLE_SUFFIX
+							: DatabaseConstants.METADATA_SUFFIX);
+					File newFile = new File(fileName.toString());
+					FileUtils.copyFile(file, newFile);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void deleteTempTables(String directory) {
+		try {
+			final File folder = new File(directory);
+			for (final File file : folder.listFiles()) {
+				if (file.getName().matches(".*\\.tmp\\..*")) {
+					file.delete();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
