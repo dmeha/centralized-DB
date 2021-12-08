@@ -4,17 +4,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.centdb.constants.DatabaseConstants;
+import com.centdb.constants.DatabaseConstants.RegExConstants;
 import com.centdb.util.Utility;
 
 public class Export {
-    private final static String BASE_DIRS_PATH = System.getProperty("user.dir") + "/centdb-samples";
-    private final static String BASE_EXPORT_PATH = System.getProperty("user.dir") + "/centdb-exports";
 
     private File database;
     private List<File> tables;
@@ -27,17 +28,19 @@ public class Export {
     }
 
     private File getDatabase(String database) {
-        return new File(BASE_DIRS_PATH + "/" + database);
+        return Paths.get(DatabaseConstants.BASE_DIRS_PATH, database).toFile();
     }
 
     private List<File> getTables(File database) {
-        File[] files = database.listFiles((FilenameFilter) (database1, name) -> name.endsWith(".table"));
+        File[] files = database
+                .listFiles((FilenameFilter) (database1, name) -> name.endsWith(DatabaseConstants.TABLE_SUFFIX));
         Arrays.sort(files);
         return new ArrayList<>(Arrays.asList(files));
     }
 
     private List<File> getMetaDataTables(File database) {
-        File[] files = database.listFiles((FilenameFilter) (database1, name) -> name.endsWith(".metadata"));
+        File[] files = database
+                .listFiles((FilenameFilter) (database1, name) -> name.endsWith(DatabaseConstants.METADATA_SUFFIX));
         Arrays.sort(files);
         return new ArrayList<>(Arrays.asList(files));
     }
@@ -50,7 +53,8 @@ public class Export {
         String constraints = "";
         for (int i = 0; i < columns.size(); i++) {
             columnString = "";
-            List<String> columnSplit = new ArrayList<>(Arrays.asList(columns.get(i).split("\\|")));
+            List<String> columnSplit = new ArrayList<>(
+                    Arrays.asList(columns.get(i).split(RegExConstants.DELIMITER_REGEX)));
 
             columnString += "`" + columnSplit.get(0) + "` ";
             columnString += Utility.getEquivalentSqlDatatype(columnSplit.get(1)) + " ";
@@ -80,12 +84,13 @@ public class Export {
         List<String> columnDataTypes = new ArrayList<>();
 
         metaDataRows.forEach((metaDataRow) -> {
-            columnDataTypes.add(metaDataRow.split("\\|")[1]);
+            columnDataTypes.add(metaDataRow.split(RegExConstants.DELIMITER_REGEX)[1]);
         });
 
         List<String> rows = getRows(table);
         for (int i = 0; i < rows.size(); i++) {
-            List<String> rowSplit = new ArrayList<>(Arrays.asList(rows.get(i).split("\\|")));
+            List<String> rowSplit = new ArrayList<>(
+                    Arrays.asList(rows.get(i).split(RegExConstants.DELIMITER_REGEX)));
 
             sqlInsertQuery += "(";
             for (int j = 0; j < rowSplit.size(); j++) {
@@ -162,16 +167,24 @@ public class Export {
         return sqlExportString;
     }
 
+    public static void showDatabases() {
+        File exportsDir = new File(DatabaseConstants.BASE_DIRS_PATH);
+        for (File file : exportsDir.listFiles()) {
+            if (file.isDirectory()) {
+                System.out.println(file.getName());
+            }
+        }
+    }
+
     public void toSql() {
         try {
 
-            File exportsDir = new File(BASE_EXPORT_PATH);
+            File exportsDir = new File(DatabaseConstants.BASE_EXPORT_PATH);
             if (!exportsDir.exists()) {
                 exportsDir.mkdir();
             }
 
-            File sqlFile = new File(
-                    BASE_EXPORT_PATH + "/" + database.getName() + ".sql");
+            File sqlFile = Paths.get(DatabaseConstants.BASE_EXPORT_PATH, database.getName() + ".sql").toFile();
             if (sqlFile.createNewFile()) {
                 System.out.println("File created: " + database.getName() + ".sql");
             } else {
