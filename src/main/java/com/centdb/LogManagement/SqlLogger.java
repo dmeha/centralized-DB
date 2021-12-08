@@ -1,42 +1,46 @@
 package com.centdb.LogManagement;
 
+import com.centdb.model.LogModel;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import com.centdb.LogManagement.LogWriter.LogWriter;
 public class SqlLogger {
-    public void generalLog(String DbName, String TableName, String RowCount, String Category){
+    private LogModel logModel;
+    public SqlLogger(LogModel logModel) {
+        this.logModel= logModel;
+    }
+    public void generalLog(){
        ArrayList<String> data = new ArrayList<>();
-       data.add(DbName);
-       data.add(TableName);
-       data.add(RowCount);
-       data.add(Category);
+       data.add(logModel.getDataBaseName());
+       data.add(logModel.getTableName());
+       data.add(logModel.getRowCount());
+       data.add(logModel.getDataBaseState());
        String WriteStr = prepareString(data);
        String GeneralLogPath = "LogResources/LogGeneral.txt";
        new LogWriter().write(GeneralLogPath, WriteStr);
-
-
     }
 
-    public void eventLog(String DbName, String eventReport, String timeStamp){
+    public void eventLog(){
         ArrayList<String> data = new ArrayList<>();
-        data.add(DbName);
-        data.add(eventReport);
-        data.add(timeStamp);
+        data.add(logModel.getDataBaseName());
+        data.add(logModel.getTypeOfQuery());
+        data.add(logModel.getStartTime());
+        data.add(logModel.getEndTime());
         String writeStr = prepareString(data);
         String eventLogPath = "LogResources/LogEvent.txt";
         new LogWriter().write(eventLogPath, writeStr);
     }
 
-    public void queryLog(String DbName, String TableName, String Query, String timestamp){
+    public void queryLog(){
         ArrayList<String> data = new ArrayList<>();
-        data.add(DbName);
-        data.add(TableName);
-        data.add(Query);
-        data.add(timestamp);
+        data.add(logModel.getDataBaseName());
+        data.add(logModel.getTableName());
+        data.add(logModel.getTypeOfQuery());
+        data.add(logModel.getStartTime());
+        data.add(logModel.getEndTime());
         String writeStr = prepareString(data);
         String QueryLogPath = "LogResources/LogQuery.txt";
         new LogWriter().write(QueryLogPath, writeStr);
-
     }
 
 
