@@ -13,13 +13,14 @@ import com.centdb.model.UpdateQueryModel;
 import com.centdb.module2.QueryExecutor;
 import com.centdb.module2.QueryParser;
 import com.centdb.module2.SyntaxChecker;
+import com.centdb.module8.MainMenu;
 
 @SpringBootApplication
 public class CentDbApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CentDbApplication.class, args);
-//		MainMenu.showLoginMenu();
+		MainMenu.showLoginMenu();
 		Scanner sc = new Scanner(System.in);
 		while (Boolean.TRUE) {
 			System.out.print("Enter a query: ");
