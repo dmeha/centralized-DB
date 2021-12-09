@@ -65,10 +65,18 @@ public class Export {
 
             if (columnSplit.size() == 3) {
                 columnString += columnSplit.get(2).toUpperCase() + " ";
-            } else if (columnSplit.size() == 5) {
-                columnString += columnSplit.get(2).toUpperCase() + " REFERENCES `" + columnSplit.get(3)
-                        + "`(`" + columnSplit.get(4) + "`)";
             }
+
+            // Adds foreign key references at table level which is
+            // SUPPORTED ON: SQL Server / Oracle / MS Access
+            // NOT SUPPORTED ON: MySQL
+
+            // else if (columnSplit.size() == 5) {
+            // columnString += columnSplit.get(2).toUpperCase() + " REFERENCES `" +
+            // columnSplit.get(3)
+            // + "`(`" + columnSplit.get(4) + "`)";
+            // }
+
             if (i != columns.size() - 1) {
                 columnString += ",\n";
             }
