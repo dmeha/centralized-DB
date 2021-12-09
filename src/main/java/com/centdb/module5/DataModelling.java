@@ -25,7 +25,7 @@ public class DataModelling {
 	}
 
 	private File getDatabase(String database) {
-		return new File(DatabaseConstants.BASE_DIRS_PATH + "/" + database);
+		return new File(DatabaseConstants.DATABASE_PATH + "/" + database);
 	}
 
 	private List<File> getMetaDataTables(File database) {
@@ -35,7 +35,7 @@ public class DataModelling {
 	}
 
 	public static void showDatabases() {
-		File exportsDir = new File(DatabaseConstants.BASE_DIRS_PATH);
+		File exportsDir = new File(DatabaseConstants.DATABASE_PATH);
 		for (File file : exportsDir.listFiles()) {
 			if (file.isDirectory()) {
 				System.out.println(file.getName());
@@ -90,7 +90,7 @@ public class DataModelling {
 		JsonElement je = JsonParser.parseString(tableObject.toString());
 		String prettyJsonString = gson.toJson(je);
 		Utility.writeTofile(
-				Paths.get(DatabaseConstants.BASE_DIRS_PATH, this.database.getName(), "erd.txt").toString(),
+				Paths.get(DatabaseConstants.DATABASE_PATH, this.database.getName(), "erd.txt").toString(),
 				prettyJsonString);
 		System.out.println("ERD created: " + database.getName() + ".txt");
 

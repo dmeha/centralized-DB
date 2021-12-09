@@ -1,3 +1,0 @@
-column|type|constraints|foreign_key_table|foreign_key_col
-a|int|||
-b|varchar|||

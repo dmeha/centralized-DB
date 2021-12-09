@@ -6,11 +6,9 @@ public class DatabaseConstants {
 
 	public static final String BASE_USER_DIR_PATH = Paths
 			.get(System.getProperty("user.dir"), "userDetails", "userLoginDetails.txt").toString();
-	public static final String BASE_DIRS_PATH = Paths.get(System.getProperty("user.dir"), "centdb-samples").toString();
 	public static final String BASE_EXPORT_PATH = Paths.get(System.getProperty("user.dir"), "centdb-exports")
 			.toString();
-	// public static final String DATABASE_PATH = "./CentDB/";
-	public static final String DATABASE_PATH = Paths.get(System.getProperty("user.dir"), "CentDB").toString();
+	public static final String DATABASE_PATH = Paths.get(System.getProperty("user.dir"), "centdb").toString();
 	public static final String TABLE_SUFFIX = ".table";
 	public static final String METADATA_SUFFIX = ".metadata";
 	public static final String DELIMITER_SYMBOL = "|";

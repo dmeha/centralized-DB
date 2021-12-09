@@ -23,6 +23,10 @@ public class Export {
 
     public Export(String database) {
         this.database = getDatabase(database);
+        if (!this.database.exists()) {
+            System.out.println("\nNo such database exists.");
+
+        }
         tables = getTables(this.database);
         metaDataTables = getMetaDataTables(this.database);
     }
@@ -190,9 +194,9 @@ public class Export {
 
             File sqlFile = Paths.get(DatabaseConstants.BASE_EXPORT_PATH, database.getName() + ".sql").toFile();
             if (sqlFile.createNewFile()) {
-                System.out.println("File created: " + database.getName() + ".sql");
+                System.out.println("\nFile created: " + database.getName() + ".sql");
             } else {
-                System.out.println("File already exists.");
+                System.out.println("\nFile already exists.");
             }
             FileWriter fileWriter = new FileWriter(sqlFile);
             fileWriter.write(this.toString());
