@@ -28,7 +28,7 @@ public class Export {
     }
 
     private File getDatabase(String database) {
-        return Paths.get(DatabaseConstants.BASE_DIRS_PATH, database).toFile();
+        return Paths.get(DatabaseConstants.DATABASE_PATH, database).toFile();
     }
 
     private List<File> getTables(File database) {
@@ -60,10 +60,10 @@ public class Export {
             columnString += Utility.getEquivalentSqlDatatype(columnSplit.get(1)) + " ";
 
             if (columnSplit.size() == 3) {
-                constraints = columnSplit.get(2);
-                for (String constraint : constraints.split("\\,")) {
-                    columnString += constraint.toUpperCase() + " ";
-                }
+                columnString += columnSplit.get(2).toUpperCase() + " ";
+            } else if (columnSplit.size() == 5) {
+                columnString += columnSplit.get(2).toUpperCase() + " REFERENCES `" + columnSplit.get(3)
+                        + "`(`" + columnSplit.get(4) + "`)";
             }
             if (i != columns.size() - 1) {
                 columnString += ",\n";
@@ -78,8 +78,7 @@ public class Export {
     }
 
     private String generateSqlInsertQuery(File table, File metaDataTable) {
-        String sqlInsertQuery = "INSERT INTO `" + table.getName().split("\\.")[0] + "` VALUES ";
-
+        String sqlInsertQuery = "";
         List<String> metaDataRows = getRows(metaDataTable);
         List<String> columnDataTypes = new ArrayList<>();
 
@@ -88,6 +87,11 @@ public class Export {
         });
 
         List<String> rows = getRows(table);
+        if (rows.size() == 0) {
+            return sqlInsertQuery;
+        }
+
+        sqlInsertQuery += "INSERT INTO `" + table.getName().split("\\.")[0] + "` VALUES ";
         for (int i = 0; i < rows.size(); i++) {
             List<String> rowSplit = new ArrayList<>(
                     Arrays.asList(rows.get(i).split(RegExConstants.DELIMITER_REGEX)));
@@ -98,7 +102,7 @@ public class Export {
                     case "int":
                         sqlInsertQuery += rowSplit.get(j);
                         break;
-                    case "string":
+                    case "varchar":
                         sqlInsertQuery += "'" + rowSplit.get(j) + "'";
                         break;
                     default:
@@ -168,7 +172,7 @@ public class Export {
     }
 
     public static void showDatabases() {
-        File exportsDir = new File(DatabaseConstants.BASE_DIRS_PATH);
+        File exportsDir = new File(DatabaseConstants.DATABASE_PATH);
         for (File file : exportsDir.listFiles()) {
             if (file.isDirectory()) {
                 System.out.println(file.getName());

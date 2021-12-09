@@ -33,12 +33,12 @@ public class Utility {
 
 	public static String getEquivalentSqlDatatype(String centDbDatatype) {
 		switch (centDbDatatype) {
-		case "int":
-			return "int";
-		case "string":
-			return "varchar(255)";
-		default:
-			return null;
+			case "int":
+				return "int";
+			case "varchar":
+				return "varchar(255)";
+			default:
+				return null;
 		}
 	}
 
@@ -159,7 +159,6 @@ public class Utility {
 		}
 		return null;
 	}
-	
 
 	public static void createCopyOfAllFilesInDirectory(String directory) {
 		try {
