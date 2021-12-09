@@ -295,7 +295,8 @@ public class QueryExecutor {
 					System.err.println("Duplicate value in primary key column.");
 
 					Date endTime = new Date();
-					log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "FAILED");
+					int tableRowC = getTable(tablePath).size();
+					log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "FAILED", Integer.toString(tableRowC));
 					return Boolean.FALSE;
 				}
 				if (primaryKeyColumnIndex != -1)
@@ -308,13 +309,15 @@ public class QueryExecutor {
 			}
 
 			Date endTime = new Date();
-			log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "SUCCESS");
+			int tableRowC = getTable(tablePath).size();
+			log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "SUCCESS",Integer.toString(tableRowC) );
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		Date endTime = new Date();
+
 		log(currentDatabase, "INSERT", startTime, endTime, insertQuery.getTableName(), "FAILED");
 		return Boolean.FALSE;
 	}
@@ -348,7 +351,7 @@ public class QueryExecutor {
 			insertMultipleRows(tablePath, table);
 
 			Date endTime = new Date();
-			log(currentDatabase, "DELETE", startTime, endTime, deleteQuery.getTableName(), "SUCCESS");
+			log(currentDatabase, "DELETE", startTime, endTime, deleteQuery.getTableName(), "SUCCESS", Integer.toString(table.get(0).length));
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -410,7 +413,7 @@ public class QueryExecutor {
 		return null;
 	}
 
-	private static void log(String databaseName, String typeOfQuery, Date startTime, Date endTime, String tableName, String queryStatus) {
+	private static void log(String databaseName, String typeOfQuery, Date startTime, Date endTime, String tableName, String queryStatus, String... args) {
 		LogModel logModel = new LogModel();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		logModel.setDataBaseName(databaseName);
@@ -418,7 +421,14 @@ public class QueryExecutor {
 		logModel.setStartTime(formatter.format(startTime));
 		logModel.setEndTime(formatter.format(endTime));
 		logModel.setTypeOfQuery(typeOfQuery);
+		if(args.length > 0){
+
+			logModel.setRowCount(args[0]);
+		}
 		logModel.setQueryStatus(queryStatus);
+		logModel.setDataBaseState("query");
 		new SqlLogger(logModel).queryLog();
+		new SqlLogger(logModel).eventLog();
+		new SqlLogger(logModel).generalLog();
 	}
 }
