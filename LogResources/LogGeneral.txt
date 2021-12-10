@@ -5,3 +5,4 @@ ____|t1|null|query|
 d1|t1|null|query|
 d1|t1|null|query|
 d1|t1|2|query|
+____|db1|null|query|

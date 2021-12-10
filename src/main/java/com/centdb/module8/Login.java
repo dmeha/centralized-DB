@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.centdb.LogManagement.SqlLogger;
 import com.centdb.constants.DatabaseConstants;
+import com.centdb.model.LogModel;
 import com.centdb.util.Hashing;
 
 public class Login {
@@ -40,6 +43,7 @@ public class Login {
                     input = new Scanner(System.in);
                     String answer = input.nextLine();
                     if (answer.equals(userDetail[3])) {
+                        logUser("login");
                         System.out.println(
                                 "\n -------------------------------------- ACCESS GRANTED -------------------------------------- \n");
                         MainMenu mainMenu = new MainMenu();
@@ -86,4 +90,18 @@ public class Login {
         }
         return null;
     }
+    
+    public void logUser(String Operation) {
+    	LogModel logModel = new LogModel();
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	logModel.setDataBaseName(Operation);
+    	logModel.setTableName(username);
+    	logModel.setStartTime(formatter.format(System.currentTimeMillis()));
+    	logModel.setEndTime("");
+    	logModel.setTypeOfQuery(Operation);
+    	logModel.setQueryStatus("");
+    	logModel.setDataBaseState("user logging");
+    	new SqlLogger(logModel).queryLog();
+    }
+    
 }
