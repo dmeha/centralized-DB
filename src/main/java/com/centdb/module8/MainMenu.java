@@ -85,9 +85,13 @@ public class MainMenu {
 						analysis.readInput();
 						break;
 					case "5":
+						Login login = new Login();
+						login.userLogin();
 						showLoginMenu();
 						break;
 					default:
+						Login login2 = new Login();
+						login2.userLogin();
 						System.exit(0);
 				}
 			} catch (Exception e) {
