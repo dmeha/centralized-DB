@@ -86,12 +86,12 @@ public class MainMenu {
 						break;
 					case "5":
 						Login login = new Login();
-						login.userLogin();
+						login.logUser("Logout");
 						showLoginMenu();
 						break;
 					default:
 						Login login2 = new Login();
-						login2.userLogin();
+						login2.logUser("Logout");
 						System.exit(0);
 				}
 			} catch (Exception e) {
